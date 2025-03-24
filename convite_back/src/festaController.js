@@ -1,6 +1,14 @@
 const presenteModel = require("../model/presente.model");
 const convidadoModel = require("../model/convidado.model");
 
+const normalizeString = (str) => {
+  return str
+    .normalize("NFD") // Separa caracteres acentuados em base + acento
+    .replace(/[\u0300-\u036f]/g, "") // Remove os acentos
+    .replace(/ç/g, "c") // Substitui 'ç' por 'c'
+    .toLowerCase(); // Converte para minúsculas
+};
+
 async function getConvidados(req, res) {
   try {
     const convidados = await convidadoModel.find();
@@ -12,25 +20,32 @@ async function getConvidados(req, res) {
 
 async function getConvidadoPorNome(req, res) {
   try{
-    const { convidadoNome } = req.params;
-    let idSingular;
-
-    const convidados = await convidadoModel.find({
-      convidado: { $in: [convidadoNome] }
-    });
-
-    if (convidados.length > 0) {
-      const ids = convidados.map(convidado => convidado.convidadoId);
-      idSingular = ids;
-      if(ids.length > 1){
-        idSingular = ids[0];
-      }
-      return res.status(200).json({ idSingular });
+    const nomes = req.query.nomes; 
+    
+    if (!nomes) {
+      return res.status(400).json({ error: "Nenhum nome foi enviado" });
     }
 
-    return res.status(404).json({ error: "Convidado não encontrado" });
+    const nomesNormalizados = nomes.map(nome => normalizeString(nome));
+
+    // Busca todos os convidados do banco
+    const convidados = await convidadoModel.find();
+    
+    // Filtra os que têm algum nome correspondente
+    const convidadosFiltrados = convidados.filter(convidado =>
+      convidado.convidado.some(nome => 
+        nomesNormalizados.includes(normalizeString(nome))
+      )
+    );
+
+    if (convidadosFiltrados.length > 0) {
+      const ids = convidadosFiltrados.map(convidado => convidado.convidadoId);
+      return res.status(200).json({ ids });
+    }
+    
+    return res.status(204).json({ message: "Convidado não encontrado" });
   } catch (err) {
-    res.status(500).json({ error: "Erro ao buscar convidados", details: err.message });
+    res.status(500).json({ error: "Erro ao buscar convidados", details: err.message, receivedData: req.params });
   }
 }
 
@@ -38,11 +53,10 @@ async function getConvidadoPorNome(req, res) {
 async function addConvidado(req, res) { 
     try {
         let {convidado}  = req.body;
-        if (!convidado) {
-          return res.status(400).json({ error: "O campo 'convidado' é obrigatório" });
-        }
-        
-         if (typeof convidado === "string") {
+        if (!convidado || convidado.length === 0) {
+          return res.status(400).json({ error: "O campo 'convidado' é obrigatório e deve conter pelo menos um nome válido." });
+      }
+        if (typeof convidado === "string") {
           convidado = [convidado];
         } 
     
@@ -115,7 +129,7 @@ async function atualizarPresente(req, res) {
           return res.status(400).json({ error: "Presente esgotado: " + presente.nomePresente });
       }
 
-      presente.convidadoId = [...presente.convidadoId, convidadoId];
+      presente.convidadoId = [...presente.convidadoId, ...convidadoId];
 
       const presenteAtualizado = await presente.save();
       res.status(200).json(presenteAtualizado);

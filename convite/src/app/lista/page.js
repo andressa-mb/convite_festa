@@ -15,38 +15,51 @@ export default function Lista() {
 
     const BASE_URL = "https://convite-festa-back.vercel.app/";
 
+    const normalizeString = (str) => {
+        return str
+          .normalize("NFD") // Separa caracteres acentuados em base + acento
+          .replace(/[\u0300-\u036f]/g, "") // Remove os acentos
+          .replace(/ç/g, "c") // Substitui 'ç' por 'c'
+          .toLowerCase(); // Converte para minúsculas
+    };
+
     useEffect(() => {
-      axios.get(`https://convite-festa-back.vercel.app/presentes-lista`)
+        axios.get(`${BASE_URL}/presentes-lista`)
         .then(response => setPresentes(response.data))
         .catch(error => console.error("Erro ao buscar presentes:", error));
     }, []);
 
     const confirmarPresenteEConvidado = async () => {
         try {
-            let convidadoId;
-            const convidadoResponse = await axios.get(`https://convite-festa-back.vercel.app/convidados/${nomes[0]}`);
-            if (!convidadoResponse.data) {
-                const criarConvidadoResponse = await cadastrarConvidado(); 
-                convidadoId = criarConvidadoResponse.data.idSingular;
-            } else {
-                convidadoId = convidadoResponse.data.idSingular;
+            const nomesNormalizados = nomes.map(nome => normalizeString(nome)).filter(nome => nome.trim() !== "");
+
+            const convidadoResponse = await axios.get(`${BASE_URL}/convidados`, {
+                params: { nomes: nomesNormalizados }
+            });
+    
+            let convidadoIds = convidadoResponse.data?.ids || [];
+    
+            if (convidadoIds.length === 0) {
+                const criarConvidadoResponse = await cadastrarConvidado();
+                convidadoIds = [criarConvidadoResponse.data.convidadoId];
             }
-            
-            for (let i = 0; i < selecionados.length; i++) {
-                await axios.put(`https://convite-festa-back.vercel.app/presentes/${selecionados[i].presenteId}`, {
-                    convidadoId: convidadoId
-                })
-            };
+    
+            for (const presente of selecionados) {
+                await axios.put(`${BASE_URL}/presentes/${presente.presenteId}`, {
+                    convidadoId: convidadoIds
+                });
+            }
+    
             alert("Convidado(s) e presente(s) confirmado(s) com sucesso!");
         } catch(error) {
-            alert(error.response.data.error);
+            alert(error.response?.data?.error || "Erro ao processar a solicitação.");
         } finally {
-            window.location.reload();
+           window.location.reload();
         }
     };
 
     const adicionarNome = () => {  
-        if(nomes[nomes.length - 1] !== ""){
+        if(nomes[nomes.length - 1].trim() !== ""){
         setNomes([...nomes, ""]);
         }else {
             alert("Preencha um nome antes de adicionar outro.");
@@ -68,11 +81,18 @@ export default function Lista() {
 
     const cadastrarConvidado = async () => {
         try{
-            await axios.post("https://convite-festa-back.vercel.app/convidados", { convidado: nomes }, {
+            const nomesFiltrados = nomes.filter(nome => nome.trim() !== "");
+            if(nomesFiltrados.length === 0){
+                alert("Insira um nome válid.o");
+                return;
+            }
+            const res = await axios.post(`${BASE_URL}/convidados`,  {convidado: nomesFiltrados}, {
             headers: {
                 'Content-Type': 'application/json'
             }
             });
+
+            return res;
             
         }catch(error){
             alert("Erro ao enviar convidado");
