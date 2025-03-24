@@ -1,7 +1,6 @@
-import React, {useState} from "react";
+import React from "react";
 import Image from "next/image";
 import "../globals.css";
-import axios from "axios";
 import Link from "next/link";
 
 

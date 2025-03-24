@@ -1,11 +1,9 @@
 "use client";
 import "../globals.css";
-import { useRouter } from "next/compat/router";
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useSearchParams } from 'next/navigation';
 
 
 export default function Lista() {
