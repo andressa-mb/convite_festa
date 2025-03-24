@@ -20,7 +20,7 @@ export default function Lista() {
           .normalize("NFD") // Separa caracteres acentuados em base + acento
           .replace(/[\u0300-\u036f]/g, "") // Remove os acentos
           .replace(/ç/g, "c") // Substitui 'ç' por 'c'
-          .toLowerCase(); // Converte para minúsculas
+          .toLowerCase(); 
     };
 
     useEffect(() => {
