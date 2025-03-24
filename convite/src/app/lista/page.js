@@ -157,7 +157,7 @@ export default function Lista() {
                                             return 0;
                                         })
                                         .map((presente) => (
-                                            <div className="d-flex flex-column">
+                                            <div key={presente.id} className="d-flex flex-column">
                                                 {presente.nomePresente === "PIX" ? (
                                                     <>
                                                         <li key={presente.id} className="mt-0 mb-0">{presente.nomePresente}</li>
