@@ -13,7 +13,7 @@ export default function Lista() {
     const [showModal, setShowModal] = useState(false);
     const inputRef = useRef(null);
 
-    const BASE_URL = "https://convite-festa-back.vercel.app/";
+    const BASE_URL = "https://convite-festa-back.vercel.app";
 
     const normalizeString = (str) => {
         return str
@@ -83,7 +83,7 @@ export default function Lista() {
         try{
             const nomesFiltrados = nomes.filter(nome => nome.trim() !== "");
             if(nomesFiltrados.length === 0){
-                alert("Insira um nome válid.o");
+                alert("Insira um nome válido.");
                 return;
             }
             const res = await axios.post(`${BASE_URL}/convidados`,  {convidado: nomesFiltrados}, {
