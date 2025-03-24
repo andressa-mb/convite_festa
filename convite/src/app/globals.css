@@ -1,0 +1,13 @@
+.cor_background {
+  background-color: #eecdfd;
+}
+
+.main-container {
+  width: 100%;
+}
+
+@media (min-width: 780px) {
+  .main-container {
+      width: 50%;
+  }
+}
