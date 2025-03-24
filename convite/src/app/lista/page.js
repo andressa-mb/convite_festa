@@ -13,8 +13,10 @@ export default function Lista() {
     const [showModal, setShowModal] = useState(false);
     const inputRef = useRef(null);
 
+    const BASE_URL = "https://convite-festa-back.vercel.app/";
+
     useEffect(() => {
-      axios.get("http://localhost:5000/presentes-lista")
+      axios.get(`https://convite-festa-back.vercel.app/presentes-lista`)
         .then(response => setPresentes(response.data))
         .catch(error => console.error("Erro ao buscar presentes:", error));
     }, []);
@@ -22,7 +24,7 @@ export default function Lista() {
     const confirmarPresenteEConvidado = async () => {
         try {
             let convidadoId;
-            const convidadoResponse = await axios.get(`http://localhost:5000/convidados/${nomes[0]}`);
+            const convidadoResponse = await axios.get(`https://convite-festa-back.vercel.app/convidados/${nomes[0]}`);
             if (!convidadoResponse.data) {
                 const criarConvidadoResponse = await cadastrarConvidado(); 
                 convidadoId = criarConvidadoResponse.data.idSingular;
@@ -31,7 +33,7 @@ export default function Lista() {
             }
             
             for (let i = 0; i < selecionados.length; i++) {
-                await axios.put(`http://localhost:5000/presentes/${selecionados[i].presenteId}`, {
+                await axios.put(`https://convite-festa-back.vercel.app/presentes/${selecionados[i].presenteId}`, {
                     convidadoId: convidadoId
                 })
             };
@@ -66,7 +68,7 @@ export default function Lista() {
 
     const cadastrarConvidado = async () => {
         try{
-            await axios.post("http://localhost:5000/convidados", { convidado: nomes }, {
+            await axios.post("https://convite-festa-back.vercel.app/convidados", { convidado: nomes }, {
             headers: {
                 'Content-Type': 'application/json'
             }
