@@ -4,7 +4,7 @@ import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-
+import Mensagem from "./mensagem.js";
 
 export default function Lista() {
     const [presentes, setPresentes] = useState([]);
@@ -13,6 +13,8 @@ export default function Lista() {
     const [showModal, setShowModal] = useState(false);
     const inputRef = useRef(null);
     const [loading, setLoading] = useState(true); 
+    const [mensagem, setMensagem] = useState("");
+    const [cor, setCor] = useState("success"); 
 
     const BASE_URL = "https://convite-festa-back.vercel.app";
 
@@ -23,6 +25,10 @@ export default function Lista() {
           .replace(/ç/g, "c") // Substitui 'ç' por 'c'
           .toLowerCase(); 
     };
+
+    const fecharMensagem = () => {
+        setMensagem("");
+      };
 
     useEffect(() => {
         axios.get(`${BASE_URL}/presentes-lista`)
@@ -57,11 +63,16 @@ export default function Lista() {
                 });
             }
     
-            alert("Convidado(s) e presente(s) confirmado(s) com sucesso!");
+            setShowModal(false);
+            setMensagem("Convidado(s) e presente(s) confirmado(s) com sucesso!");
+            setCor("success");
         } catch(error) {
-            alert(error.response?.data?.error || "Erro ao processar a solicitação.");
+            setMensagem(error.response?.data?.error || "Erro ao confirmar presença.");
+            setCor("danger");
         } finally {
-           window.location.reload();
+            setTimeout(() => {
+                window.location.reload();
+            }, 8000);
         }
     };
 
@@ -69,7 +80,8 @@ export default function Lista() {
         if(nomes[nomes.length - 1].trim() !== ""){
         setNomes([...nomes, ""]);
         }else {
-            alert("Preencha um nome antes de adicionar outro.");
+            setMensagem("Preencha um nome antes de adicionar outro.");
+            setCor("danger");
         }
       };
     
@@ -90,7 +102,8 @@ export default function Lista() {
         try{
             const nomesFiltrados = nomes.filter(nome => nome.trim() !== "");
             if(nomesFiltrados.length === 0){
-                alert("Insira um nome válido.");
+                setMensagem("Insira um nome válido.");
+                setCor("danger");
                 return;
             }
             const res = await axios.post(`${BASE_URL}/convidados`,  {convidado: nomesFiltrados}, {
@@ -102,14 +115,15 @@ export default function Lista() {
             return res;
             
         }catch(error){
-            alert("Erro ao enviar convidado");
-            console.error("Erro ao enviar convidado:", error);
+            setMensagem("Erro ao enviar convidado.");
+            setCor("danger");
         }
     }
 
     const abrirModal = () => {
         if(nomes.length === 1 && nomes[0] === "") {
-            alert("Digite ao menos um nome.");
+            setMensagem("Digite ao menos um nome.");
+            setCor("danger");
             inputRef.current.focus();
             return;
         }
@@ -124,8 +138,7 @@ export default function Lista() {
     <div>
         <main className="px-5 py-2 m-auto cor_background text-center main-container">
         {loading ? ( 
-            // Exibe "Carregando..." enquanto os dados estão sendo buscados
-            <div className="loading-container d-flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle w-50 h-50 bg-warning border border-dark rounded shadow">
+            <div className="loading-container d-flex justify-content-center align-items-center position-absolute start-50 translate-middle w-sm-100 vh-sm-100 bg-warning border border-dark rounded shadow" style={{top: '10%'}}>
                 <p className="display-4 fw-bold text-dark text-uppercase">Carregando...</p>
             </div>
             ) : (
@@ -226,6 +239,7 @@ export default function Lista() {
             </section>
             </>
             )}
+            <Mensagem mensagem={mensagem} cor={cor} fecharMensagem={fecharMensagem} />
         </main>
     </div>
   )

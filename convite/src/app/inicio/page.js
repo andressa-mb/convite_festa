@@ -9,7 +9,9 @@ export default function Index() {
     <div>
         <main className="m-auto px-5 py-4 cor_background text-center min-vh-100 main-container">
         <section className="pt-5">
-          <h1>Andressa e Vinícius!</h1>
+          <h1>Andressa e Vinícius</h1>
+          <h2>19/04 às 16h</h2>
+          <h2>Local: xyxyxyx</h2>
         </section>
 
         <section>
@@ -23,19 +25,15 @@ export default function Index() {
 
         <section>
           <p>
-            Olá! Seja bem-vindo ao nosso chá de casa nova! Agradecemos a sua
-            presença e o seu carinho. Estamos muito felizes em compartilhar este
-            momento com vocês!
+            Estamos montando nosso lar com muito amor e carinho,
+            e seria incrível compartilhar esse momento com você!
+            Sua presença é o nosso maior presente, mas, se quiser nos ajudar
+            a tornar esse sonho realidade, criamos uma lista com sugestões de presentes.
           </p>
           <p>
-            Estamos montando nossa casa com muito amor e carinho, e é muito
-            especial poder contar com a ajuda de vocês para tornar esse sonho
-            realidade.
-          </p>
-          <p>
-            Para facilitar a escolha dos presentes, criamos uma lista com
-            sugestões de presentes. Fique à vontade para escolher o presente que
-            mais combina com você. Agradecemos de coração!
+            Fique à vontade para escolher a opção que mais tem a ver com você
+            e com o que precisamos. Agradecemos de coração por fazer parte desse
+            novo capítulo da nossa vida!
           </p>
         </section>
 
