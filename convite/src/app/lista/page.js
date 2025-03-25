@@ -12,6 +12,7 @@ export default function Lista() {
     const [nomes, setNomes] = useState([""]);
     const [showModal, setShowModal] = useState(false);
     const inputRef = useRef(null);
+    const [loading, setLoading] = useState(true); 
 
     const BASE_URL = "https://convite-festa-back.vercel.app";
 
@@ -25,8 +26,14 @@ export default function Lista() {
 
     useEffect(() => {
         axios.get(`${BASE_URL}/presentes-lista`)
-        .then(response => setPresentes(response.data))
-        .catch(error => console.error("Erro ao buscar presentes:", error));
+            .then(response => {
+                setPresentes(response.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error("Erro ao buscar presentes:", error);
+                setLoading(false);
+            });
     }, []);
 
     const confirmarPresenteEConvidado = async () => {
@@ -116,6 +123,13 @@ export default function Lista() {
   return (
     <div>
         <main className="px-5 py-2 m-auto cor_background text-center main-container">
+        {loading ? ( 
+            // Exibe "Carregando..." enquanto os dados estão sendo buscados
+            <div className="loading-container d-flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle w-50 h-50 bg-warning border border-dark rounded shadow">
+                <p className="display-4 fw-bold text-dark text-uppercase">Carregando...</p>
+            </div>
+            ) : (
+            <>
             <section className="mt-5">
             <h2>Confirme sua presença adicionando seus nomes:</h2>
                 <form className="form-inline" encType="multipart/form-data">
@@ -210,6 +224,8 @@ export default function Lista() {
                 </div>
                 )}
             </section>
+            </>
+            )}
         </main>
     </div>
   )
