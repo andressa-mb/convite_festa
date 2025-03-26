@@ -10,8 +10,8 @@ export default function Index() {
         <main className="m-auto px-5 py-4 cor_background text-center min-vh-100 main-container">
         <section className="pt-5">
           <h1>Andressa e Vinícius</h1>
-          <h2>19/04 às 16h</h2>
-          <h2>Local: xyxyxyx</h2>
+          <h2>12/04 às 17h</h2>
+          <h2>Local: Rua Bonsucesso, 404 / Terraço</h2>
         </section>
 
         <section>
