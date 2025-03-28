@@ -158,7 +158,7 @@ async function atualizarPresenteQtd(req, res) {
           return res.status(404).json({ error: "Presente não encontrado" });
       }
    
-      if(quantidadePresente){
+      if(quantidadePresente !== undefined){
         presente.quantidade = quantidadePresente;
       }
 
