@@ -122,6 +122,10 @@ async function atualizarPresente(req, res) {
       if (!presente) {
           return res.status(404).json({ error: "Presente não encontrado" });
       }
+   
+      if(quantidadePresente){
+        presente.quantidade = quantidadePresente;
+      }
 
       if (presente.quantidade > 0) {
           presente.quantidade -= 1;
@@ -129,9 +133,6 @@ async function atualizarPresente(req, res) {
           return res.status(400).json({ error: "Presente esgotado: " + presente.nomePresente });
       }
 
-      if(quantidadePresente){
-        presente.quantidade = quantidadePresente;
-      }
 
       if (nomePresente) {
         presente.nomePresente = nomePresente;
@@ -141,6 +142,36 @@ async function atualizarPresente(req, res) {
 
       const presenteAtualizado = await presente.save();
       res.status(200).json(presenteAtualizado);
+  
+  } catch (err) {
+      res.status(500).json({ error: "Erro ao atualizar presente", details: err.message });
+  }
+}
+
+async function atualizarPresenteQtd(req, res) {
+  try {
+      const { presenteId } = req.params;
+      let { convidadoId, nomePresente, quantidadePresente } = req.body;
+
+      const presente = await presenteModel.findOne({ presenteId });
+      if (!presente) {
+          return res.status(404).json({ error: "Presente não encontrado" });
+      }
+   
+      if(quantidadePresente){
+        presente.quantidade = quantidadePresente;
+      }
+
+
+      if (nomePresente) {
+        presente.nomePresente = nomePresente;
+    }
+
+      presente.convidadoId = [...presente.convidadoId, ...convidadoId];
+
+      const presenteAtualizado = await presente.save();
+      res.status(200).json(presenteAtualizado);
+  
   } catch (err) {
       res.status(500).json({ error: "Erro ao atualizar presente", details: err.message });
   }
@@ -148,4 +179,4 @@ async function atualizarPresente(req, res) {
 
 
 
-module.exports = { getConvidados, addConvidado, getConvidadoPorNome, getPresentes, getPresentePorId, addPresente, atualizarPresente };
+module.exports = { getConvidados, addConvidado, getConvidadoPorNome, getPresentes, getPresentePorId, addPresente, atualizarPresente, atualizarPresenteQtd };

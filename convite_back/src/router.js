@@ -9,5 +9,6 @@ router.get('/presentes-lista', festaController.getPresentes);
 router.post('/presentes', festaController.addPresente);
 router.get('/presentesId/:presenteId', festaController.getPresentePorId);
 router.put('/presentes/:presenteId', festaController.atualizarPresente);
+router.put('/presentesQtd/:presenteId', festaController.atualizarPresenteQtd);
 
 module.exports = router;
