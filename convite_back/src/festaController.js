@@ -116,7 +116,7 @@ async function addPresente(req, res) {
 async function atualizarPresente(req, res) {
   try {
       const { presenteId } = req.params;
-      let { convidadoId } = req.body;
+      let { convidadoId, nomePresente, quantidadePresente } = req.body;
 
       const presente = await presenteModel.findOne({ presenteId });
       if (!presente) {
@@ -128,6 +128,14 @@ async function atualizarPresente(req, res) {
       } else {
           return res.status(400).json({ error: "Presente esgotado: " + presente.nomePresente });
       }
+
+      if(quantidadePresente){
+        presente.quantidade = quantidadePresente;
+      }
+
+      if (nomePresente) {
+        presente.nomePresente = nomePresente;
+    }
 
       presente.convidadoId = [...presente.convidadoId, ...convidadoId];
 
